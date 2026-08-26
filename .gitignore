@@ -1,69 +1,75 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
-
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# Build directories
-build/
+########################################
+# unreal
+Binaries/
 Build/
-build-*/
+DerivedDataCache/
+Intermediate/
+Saved/
+Plugins/*/Intermediate/
+Plugins/*/Binaries/
+StarterContent/
+*/Content/ThirdPerson/
+*/Content/Characters/
 
-# CMake generated files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-install_manifest.txt
-compile_commands.json
+########################################
+# svn
+.svn/
 
-# Temporary files
-*.tmp
+########################################
+# Visual Studio
+_LIB/
+_OBJ/
+_bin/
+Debug/
+Release/
+packages/
+.vs/
+.vscode/
+.tlog/
+**/obj/
+UpgradeLog.htm
+*.tlog
+*.idb
+*.ilk
+*.recipe
 *.log
-*.bak
-*.swp
+*.obj
+*.pdb
+*.sln.docstates
+*.user
+*.userosscache
+*.suo
+*.VC.db
+*.opensdf
 
-# vcpkg
-vcpkg_installed/
+########################################
+# android studio
+.gradle/
+.cxx/
+build/
+**/main/assets/
+.externalNativeBuild/
 
-# debug information files
-*.dwo
+########################################
+# xcode
+*.xcuserstate
+**/DerivedData/
+**/xcuserdata/
 
-# test output & cache
-Testing/
-.cache/
+########################################
+# Rider
+.idea
+JetBrains/
+JetBrains.meta
+_ReSharper.Caches/
+
+########################################
+# OS
+.github
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
