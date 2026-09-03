@@ -124,10 +124,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CApplication.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="SceneGameBegin.cpp" />
+    <ClCompile Include="SceneGamePlay.cpp" />
+    <ClCompile Include="SceneGameResult.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CApplication.h" />
+    <ClInclude Include="SceneGameBegin.h" />
+    <ClInclude Include="SceneGamePlay.h" />
+    <ClInclude Include="SceneGameResult.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
