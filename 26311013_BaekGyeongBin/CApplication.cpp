@@ -1,68 +1,21 @@
-#include <stdio.h>
 #include "CApplication.h"
 #include "glc2d.h"
-
 extern CApplication g_app;
-
-int AppUpdate()
-{
-	return g_app.Update();
-}
-
-int AppRender()
-{
-	return g_app.Render();
-}
-
-
-int CApplication::Init()
-{
-	InitSdk();
-
-	m_sceneBegin.Init();
-
-	return 0;
-}
-
-int CApplication::Update()
-{
-	printf("Update ...\n\n");
-
-	m_sceneBegin.Update();
-
-	return 0;
-}
-
-int CApplication::Render()
-{
-	printf("Render ...\n\n");
-
-	m_sceneBegin.Render();
-
-	return 0;
-}
-
-int CApplication::Destroy()
-{
-	m_sceneBegin.Destroy();
-
-	g2_DestroyWin();
-	return 0;
-}
-
-int CApplication::InitSdk()
-{
-
-	g2_InitSdk();
-
-	printf("Starting ... \n\n");
-	g2_SetFrameMove(AppUpdate);
+int AppUpdate() { return g_app.Update(); }
+int AppRender() { return g_app.Render(); }
+int CApplication::Init() {
+    g2_InitSdk();
+    g2_SetFrameMove(AppUpdate);
     g2_SetRender(AppRender);
-
-
-	g2_CreateWin(m_winPos.x, m_winPos.y
-		, m_winSize.cx, m_winSize.cy, m_winName.c_str());
-
-
-	return 0;
+    g2_CreateWin(100,30,1280,960,"Dungeon Escape",false);
+    if (!g2_GetHwnd()) return -1;
+    g2_ChangeWindow(true);
+    g2_SetClearColor(0xff101720);
+    g2_SetStateShow(false);
+    return begin.Init();
 }
+int CApplication::Update() {
+    return begin.Update();
+}
+int CApplication::Render() { return begin.Render(); }
+int CApplication::Destroy() { begin.Destroy(); g2_DestroyWin(); return 0; }

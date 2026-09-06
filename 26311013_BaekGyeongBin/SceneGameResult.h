@@ -1,9 +1,4 @@
 #pragma once
-class SceneGameResult
-{
-public:
-	int Init();
-	int Update();
-	int Render();
-	int Destroy();
-};
+#include "DungeonGame.h"
+#include "DungeonUI.h"
+class SceneGameResult { public: void Render(const DungeonUI& ui,const dungeon::Game& game) const; };

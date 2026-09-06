@@ -139,6 +139,14 @@
     <ClInclude Include="SceneGamePlay.h" />
     <ClInclude Include="SceneGameResult.h" />
   </ItemGroup>
+  <ItemGroup>
+    <CoverResource Include="resource\texture\Title.png" />
+    <MusicResource Include="resource\sound\Main bgm.mp3" />
+  </ItemGroup>
+  <Target Name="CopyCoverResource" AfterTargets="Build">
+    <Copy SourceFiles="@(CoverResource)" DestinationFolder="$(TargetDir)resource\texture" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(MusicResource)" DestinationFolder="$(TargetDir)resource\sound" SkipUnchangedFiles="true" />
+  </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="packages\Microsoft.DXSDK.D3DX.9.29.952.8\build\native\Microsoft.DXSDK.D3DX.targets" Condition="Exists('packages\Microsoft.DXSDK.D3DX.9.29.952.8\build\native\Microsoft.DXSDK.D3DX.targets')" />

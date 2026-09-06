@@ -1,9 +1,8 @@
 #pragma once
-class SceneGamePlay
-{
+#include "DungeonGame.h"
+#include "DungeonUI.h"
+class SceneGamePlay {
 public:
-	int Init();
-	int Update();
-	int Render();
-	int Destroy();
+    dungeon::Game game;
+    void Render(const DungeonUI& ui) const;
 };
