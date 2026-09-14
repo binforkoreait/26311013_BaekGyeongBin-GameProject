@@ -1,11 +1,13 @@
 #pragma once
 #include "SceneGameBegin.h"
-class CApplication {
-public:
+class CApplication
+{
+  public:
     int Init();
     int Update();
     int Render();
     int Destroy();
-private:
+
+  private:
     SceneGameBegin begin;
 };

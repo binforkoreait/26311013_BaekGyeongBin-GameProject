@@ -1,19 +1,35 @@
 #pragma once
+#include "ForestBattle.h"
 #include "GameAudio.h"
-class SceneGameBegin {
-public:
+class SceneGameBegin
+{
+  public:
     int Init();
     int Update();
     int Render() const;
     int Destroy();
-private:
+
+  private:
+    void StartBattle();
+    void ReturnToTitle();
+    void RenderBattle() const;
     int texture = -1;
+    int forestBackground = -1;
+    int playerSprite = -1;
+    int forestEnemySprite = -1;
+    int potionSprite = -1;
+    int superPotionSprite = -1;
     int mainBgm = -1;
     int font = -1;
     int smallFont = -1;
     int selected = 0;
     int menuWidths[3]{};
-    enum class Page { Menu, Start, Settings };
+    enum class Page
+    {
+        Menu,
+        Battle,
+        Settings
+    };
     Page page = Page::Menu;
     bool previous[256]{};
     bool windowed = true;
@@ -21,4 +37,5 @@ private:
     int volumePercent = 100;
     bool audioAvailable = false;
     GameAudio audio;
+    ForestBattle battle;
 };
