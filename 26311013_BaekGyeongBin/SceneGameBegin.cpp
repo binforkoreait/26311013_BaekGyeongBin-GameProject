@@ -22,10 +22,17 @@ int SceneGameBegin::Init()
     }
 
     forestBackground = g2_TextureLoad("resource/texture/Forest.png", 0);
+    ruinsBackground = g2_TextureLoad("resource/texture/Ruins.png", 0);
+    caveBackground = g2_TextureLoad("resource/texture/Cave.png", 0);
+    citadelBackground = g2_TextureLoad("resource/texture/Citadel.png", 0);
     playerSprite = g2_TextureLoad("resource/texture/Player.png", 0);
     forestEnemySprite = g2_TextureLoad("resource/texture/ForestEnemy.png", 0);
+    ruinsEnemySprite = g2_TextureLoad("resource/texture/RuinsEnemy.png", 0);
+    caveEnemySprite = g2_TextureLoad("resource/texture/CaveEnemy.png", 0);
+    bossSprite = g2_TextureLoad("resource/texture/Boss.png", 0);
     potionSprite = g2_TextureLoad("resource/texture/Potion.png", 0);
     superPotionSprite = g2_TextureLoad("resource/texture/SuperPotion.png", 0);
+    rewardIcons = g2_TextureLoad("resource/texture/RewardIcons.png", 0);
 
     font = g2_FontCreate("Noto Serif KR", 40);
     smallFont = g2_FontCreate("Noto Serif KR", 18);
@@ -162,9 +169,18 @@ int SceneGameBegin::Update()
         {
             battle.MoveDown();
         }
+        if (pressed[VK_LEFT])
+        {
+            battle.MoveLeft();
+        }
+        if (pressed[VK_RIGHT])
+        {
+            battle.MoveRight();
+        }
         if (pressed[VK_RETURN])
         {
             ForestBattle::Menu menu = battle.CurrentMenu();
+            ForestBattle::Result beforeResult = battle.CurrentResult();
             if (menu == ForestBattle::Menu::Pause)
             {
                 if (battle.Selection() == 0)
@@ -191,6 +207,14 @@ int SceneGameBegin::Update()
             {
                 battle.Confirm();
             }
+            if (battle.CurrentResult() == ForestBattle::Result::Clear &&
+                beforeResult != ForestBattle::Result::Clear)
+                MessageBeep(MB_ICONASTERISK);
+            else if (battle.CurrentResult() == ForestBattle::Result::Defeat &&
+                     beforeResult != ForestBattle::Result::Defeat)
+                MessageBeep(MB_ICONHAND);
+            else
+                MessageBeep(MB_OK);
         }
     }
     else if (page == Page::Settings)
@@ -254,20 +278,12 @@ int SceneGameBegin::Update()
 }
 void SceneGameBegin::StartBattle()
 {
-    if (mainBgm >= 0)
-    {
-        g2_SoundStop(mainBgm);
-    }
     battle.Start();
     page = Page::Battle;
 }
 void SceneGameBegin::ReturnToTitle()
 {
     page = Page::Menu;
-    if (mainBgm >= 0)
-    {
-        g2_SoundPlay(mainBgm, true);
-    }
 }
 int SceneGameBegin::Render() const
 {
@@ -285,17 +301,27 @@ int SceneGameBegin::Render() const
     const float scale = (std::max)(float(g2_GetScnW()) / width, float(g2_GetScnH()) / height);
     VEC2 scaling(scale, scale);
     VEC2 position((g2_GetScnW() - width * scale) / 2, (g2_GetScnH() - height * scale) / 2);
-    if (page == Page::Battle && forestBackground >= 0)
+    if (page == Page::Battle)
     {
-        int forestWidth = g2_TextureWidth(forestBackground);
-        int forestHeight = g2_TextureHeight(forestBackground);
-        float forestScale =
-            (std::max)(float(g2_GetScnW()) / forestWidth, float(g2_GetScnH()) / forestHeight);
-        VEC2 forestScaling(forestScale, forestScale);
-        VEC2 forestPosition((g2_GetScnW() - forestWidth * forestScale) / 2,
-                            (g2_GetScnH() - forestHeight * forestScale) / 2);
-        g2_Draw2D(forestBackground, nullptr, &forestPosition, &forestScaling, nullptr, 0,
-                  0xff777777);
+        int background = forestBackground;
+        if (battle.CurrentBiome() == ForestBattle::Biome::Ruins)
+            background = ruinsBackground;
+        else if (battle.CurrentBiome() == ForestBattle::Biome::Cave)
+            background = caveBackground;
+        else if (battle.CurrentBiome() == ForestBattle::Biome::Citadel)
+            background = citadelBackground;
+        if (background >= 0)
+        {
+            int backgroundWidth = g2_TextureWidth(background);
+            int backgroundHeight = g2_TextureHeight(background);
+            float backgroundScale = (std::max)(float(g2_GetScnW()) / backgroundWidth,
+                                               float(g2_GetScnH()) / backgroundHeight);
+            VEC2 backgroundScaling(backgroundScale, backgroundScale);
+            VEC2 backgroundPosition((g2_GetScnW() - backgroundWidth * backgroundScale) / 2,
+                                    (g2_GetScnH() - backgroundHeight * backgroundScale) / 2);
+            g2_Draw2D(background, nullptr, &backgroundPosition, &backgroundScaling, nullptr, 0,
+                      0xff777777);
+        }
     }
     else
     {
@@ -397,31 +423,106 @@ void SceneGameBegin::RenderBattle() const
         g2_Draw2D(id, nullptr, &position, &scale);
     };
 
-    line(55, "숲 - 일반 전투 1 / 3", 0xffffd77a);
-    line(95, "플레이어 체력: " + std::to_string(battle.PlayerHp()) + " / 100");
-    line(130, "숲의 야수 체력: " + std::to_string(battle.EnemyHp()) + " / 50");
-    sprite(playerSprite, 180, 245, 360);
-    if (battle.EnemyHp() > 0)
+    const auto preview = [&](int id, float x, float y, float width) {
+        if (id < 0)
+            return;
+        float scaleFactor = width / g2_TextureWidth(id);
+        VEC2 position(x, y);
+        VEC2 scale(scaleFactor, scaleFactor);
+        g2_Draw2D(id, nullptr, &position, &scale, nullptr, 0, 0xffbbbbbb);
+    };
+
+    ForestBattle::Menu menu = battle.CurrentMenu();
+    if (menu == ForestBattle::Menu::BiomeSelect)
     {
-        sprite(forestEnemySprite, 750, 305, 310);
+        line(70, "다음 바이옴 선택", 0xffffd77a);
+        preview(ruinsBackground, 145, 210, 420);
+        preview(caveBackground, 715, 210, 420);
+        line(555, battle.Selection() == 0 ? "> 폐허 - 수호자의 땅 <" : "폐허 - 수호자의 땅",
+             battle.Selection() == 0 ? 0xffffd77a : 0xffedf0f4);
+        RECT caveBounds{715, 555, 1190, 591};
+        std::string caveLabel = ToLocalText(battle.Selection() == 1 ? "> 동굴 - 박쥐의 둥지 <"
+                                                                    : "동굴 - 박쥐의 둥지");
+        g2_FontDrawText(smallFont, caveBounds,
+                        battle.Selection() == 1 ? 0xffffd77a : 0xffedf0f4, "%s",
+                        caveLabel.c_str());
+        line(650, battle.Message(), 0xffffd77a);
+        line(820, "← / → 선택   Enter 확정");
+        return;
     }
-    line(635, battle.Message(), 0xffffd77a);
+
+    if (menu == ForestBattle::Menu::Reward)
+    {
+        line(65, "승리 보상 선택", 0xffffd77a);
+        line(105, battle.Message());
+        const char *names[] = {"공격 강화", "체력 강화", "도구 보급"};
+        const char *effects[] = {"공격력 +5", "최대/현재 체력 +20", "회복약 +2"};
+        const int iconWidth = rewardIcons >= 0 ? g2_TextureWidth(rewardIcons) / 3 : 0;
+        const int iconHeight = rewardIcons >= 0 ? g2_TextureHeight(rewardIcons) : 0;
+        for (int i = 0; i < 3; ++i)
+        {
+            if (rewardIcons >= 0)
+            {
+                RECT source{i * iconWidth, 0, (i + 1) * iconWidth, iconHeight};
+                float scaleFactor = 230.0f / iconHeight;
+                VEC2 position(175.0f + i * 430.0f, 240.0f);
+                VEC2 scale(scaleFactor, scaleFactor);
+                g2_Draw2D(rewardIcons, &source, &position, &scale, nullptr, 0,
+                          i == battle.Selection() ? 0xffffffff : 0xff777777);
+            }
+            RECT nameBounds{120 + i * 430, 520, 500 + i * 430, 556};
+            std::string name = ToLocalText(std::string(i == battle.Selection() ? "> " : "") +
+                                           names[i]);
+            g2_FontDrawText(smallFont, nameBounds,
+                            i == battle.Selection() ? 0xffffd77a : 0xffedf0f4, "%s",
+                            name.c_str());
+            RECT effectBounds{120 + i * 430, 565, 510 + i * 430, 601};
+            std::string effect = ToLocalText(effects[i]);
+            g2_FontDrawText(smallFont, effectBounds, 0xffedf0f4, "%s", effect.c_str());
+        }
+        line(820, "← / → 선택   Enter 확정");
+        return;
+    }
+
+    int enemySprite = forestEnemySprite;
+    if (battle.CurrentBiome() == ForestBattle::Biome::Ruins)
+        enemySprite = ruinsEnemySprite;
+    else if (battle.CurrentBiome() == ForestBattle::Biome::Cave)
+        enemySprite = caveEnemySprite;
+    else if (battle.CurrentBiome() == ForestBattle::Biome::Citadel)
+        enemySprite = bossSprite;
+
+    std::string progress = battle.IsBoss() ? "최종 보스전" :
+        "일반 전투 " + std::to_string(battle.EncounterNumber()) + " / 3";
+    line(45, battle.BiomeName() + " - " + progress, 0xffffd77a);
+    line(82, "플레이어 체력: " + std::to_string(battle.PlayerHp()) + " / " +
+                 std::to_string(battle.PlayerMaxHp()) + "   공격력: " +
+                 std::to_string(battle.PlayerAttack()) + "   점수: " +
+                 std::to_string(battle.Score()));
+    line(118, battle.EnemyName() + " 체력: " + std::to_string(battle.EnemyHp()) + " / " +
+                  std::to_string(battle.EnemyMaxHp()));
+    sprite(playerSprite, 180, 235, 360);
+    if (battle.EnemyHp() > 0)
+        sprite(enemySprite, 750, battle.IsBoss() ? 225.0f : 285.0f,
+               battle.IsBoss() ? 380.0f : 310.0f);
+    line(630, battle.Message(), 0xffffd77a);
 
     std::string options[3];
     int count = 0;
-    ForestBattle::Menu menu = battle.CurrentMenu();
     if (menu == ForestBattle::Menu::Main)
     {
         options[0] = "공격";
         options[1] = "도구";
-        options[2] = "도망 (성공 확률 60%)";
+        options[2] = battle.IsBoss() ? "도망 (보스전 사용 불가)" : "도망 (성공 확률 60%)";
         count = 3;
     }
     else if (menu == ForestBattle::Menu::Attack)
     {
-        options[0] = "기본 공격 - 피해 20";
-        options[1] = "강한 공격 - 피해 30, 명중률 75%";
-        options[2] = "흡수 공격 - 피해 10, 준 피해의 절반 회복";
+        options[0] = "기본 공격 - 피해 " + std::to_string(battle.PlayerAttack());
+        options[1] = "강한 공격 - 피해 " + std::to_string(battle.PlayerAttack() * 3 / 2) +
+                     ", 명중률 75%";
+        options[2] = "흡수 공격 - 피해 " + std::to_string(battle.PlayerAttack() / 2) +
+                     ", 준 피해의 절반 회복";
         count = 3;
     }
     else if (menu == ForestBattle::Menu::Item)
@@ -438,9 +539,15 @@ void SceneGameBegin::RenderBattle() const
     }
     else if (menu == ForestBattle::Menu::Finished)
     {
-        options[0] = "첫 전투 다시 시작";
+        options[0] = "새 도전 시작";
         options[1] = "타이틀로";
         count = 2;
+        const char *resultText = battle.CurrentResult() == ForestBattle::Result::Clear
+                                     ? "GAME CLEAR"
+                                     : "GAME OVER";
+        line(575, resultText,
+             battle.CurrentResult() == ForestBattle::Result::Clear ? 0xff77e1ba : 0xffff8f8f);
+        line(605, "최종 점수: " + std::to_string(battle.Score()));
     }
 
     for (int i = 0; i < count; ++i)
@@ -488,8 +595,10 @@ int SceneGameBegin::Destroy()
         g2_TextureRelease(texture);
         texture = -1;
     }
-    int *battleTextures[] = {&forestBackground, &playerSprite, &forestEnemySprite, &potionSprite,
-                             &superPotionSprite};
+    int *battleTextures[] = {&forestBackground,   &ruinsBackground, &caveBackground,
+                             &citadelBackground,  &playerSprite,     &forestEnemySprite,
+                             &ruinsEnemySprite,   &caveEnemySprite,  &bossSprite,
+                             &potionSprite,       &superPotionSprite, &rewardIcons};
     for (int *id : battleTextures)
     {
         if (*id >= 0)

@@ -3,7 +3,6 @@
 #include <string>
 #include <windows.h>
 
-// glc2d에 한글을 넘길 때 UTF-8 문자열을 윈도우 문자 인코딩으로 바꾼다.
 inline std::string ToLocalText(const std::string &utf8)
 {
     if (utf8.empty())

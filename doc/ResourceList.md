@@ -17,6 +17,7 @@
 | 성채 보스 | `Boss.png` | 최종 보스 | Codex ImageGen, 2026-09-14 | 사용 조건 미확인 |
 | 회복약 | `Potion.png` | HP 30 회복 도구 | Codex ImageGen, 2026-09-14 | 사용 조건 미확인 |
 | 고급 회복약 | `SuperPotion.png` | HP 60 회복 도구 | Codex ImageGen, 2026-09-14 | 사용 조건 미확인 |
+| 보상 아이콘 시트 | `RewardIcons.png` | 공격·체력·도구 보상 선택 화면 | Codex ImageGen, 2026-09-21 | OpenAI 서비스 이용 조건에 따름 |
 | 타이틀 음악: New Future | `Main bgm.mp3` | 시작 화면 음악 | [Ian Aisling - New Future](https://uppbeat.io/music/tracks/ian-aisling/new-future), Uppbeat (사용자 제공) | 다운로드 당시 적용된 사용 조건·크레딧 문구 미확인 |
 
-`mario.png`는 현재 게임에서 사용하지 않으며, 최종 리소스 목록에 포함하지 않았다. 보상 아이콘과 지역 선택 지도, 전투 음악·효과음은 아직 준비되지 않았다. 타이틀 음악을 내려받을 때 받은 크레딧 문구나 라이선스 기록이 확인되면 사용 조건을 추가한다.
+`mario.png`와 `정글.png`는 현재 게임에서 사용하지 않으며 최종 리소스 목록에서 제외한다. 지역 선택은 별도 지도 대신 실제 폐허·동굴 배경 미리보기로 구현했다. 배경 음악은 전체 장면에서 반복 재생하며 선택·결과 효과음은 Windows 시스템 효과음을 사용한다. 타이틀 음악을 내려받을 때 받은 크레딧 문구나 라이선스 기록이 확인되면 사용 조건을 추가한다.

@@ -15,10 +15,17 @@ class SceneGameBegin
     void RenderBattle() const;
     int texture = -1;
     int forestBackground = -1;
+    int ruinsBackground = -1;
+    int caveBackground = -1;
+    int citadelBackground = -1;
     int playerSprite = -1;
     int forestEnemySprite = -1;
+    int ruinsEnemySprite = -1;
+    int caveEnemySprite = -1;
+    int bossSprite = -1;
     int potionSprite = -1;
     int superPotionSprite = -1;
+    int rewardIcons = -1;
     int mainBgm = -1;
     int font = -1;
     int smallFont = -1;

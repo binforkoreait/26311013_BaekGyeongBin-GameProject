@@ -160,6 +160,7 @@
     <CoverResource Include="resource\texture\Boss.png" />
     <CoverResource Include="resource\texture\Potion.png" />
     <CoverResource Include="resource\texture\SuperPotion.png" />
+    <CoverResource Include="resource\texture\RewardIcons.png" />
     <MusicResource Include="resource\sound\Main bgm.mp3" />
   </ItemGroup>
   <Target Name="CopyCoverResource" AfterTargets="Build">
